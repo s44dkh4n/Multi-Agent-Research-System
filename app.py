@@ -1,10 +1,3 @@
-"""
-Streamlit UI for the Multi-Agent Research System (Search -> Scrape -> Write -> Critique).
-
-Run from the project root (same folder as Agent.py, pipeline.py, tool.py):
-    streamlit run app.py
-"""
-
 import re
 from datetime import datetime
 
@@ -55,7 +48,16 @@ EXAMPLE_TOPICS = [
     "Latest developments in AI",
     "Renewable energy breakthroughs 2026",
     "Global semiconductor supply chain",
+    "Advances in quantum computing",
 ]
+
+
+def set_topic(value: str):
+    """Safe way to change the text_input's value: session_state for a keyed
+    widget can only be written before that widget is instantiated in a run,
+    so this must run as an on_click callback (which fires before the next
+    rerun's script body), never as a plain post-instantiation assignment."""
+    st.session_state.topic_input = value
 
 
 # ----------------------------------------------------------------------------
@@ -80,8 +82,22 @@ st.markdown(
     }
 
     .stApp { background: var(--ink); }
-    .stApp, .stApp p, .stApp label, .stApp span { color: var(--text); font-family: 'Inter', sans-serif; }
+    .stApp, .stApp p, .stApp label,
+    .stApp span:not([class*="material-symbols"]):not([data-testid="stIconMaterial"]) {
+        color: var(--text); font-family: 'Inter', sans-serif;
+    }
     h1, h2, h3 { font-family: 'Fraunces', serif !important; }
+
+    /* Keep Streamlit's icon font intact (expander arrow, etc.) — the rule above
+       was overriding it with Inter, which turned icon glyphs into raw text
+       like "arrow_right" overlapping the label next to them. */
+    [data-testid="stIconMaterial"],
+    .material-symbols-rounded,
+    .material-symbols-outlined,
+    [class*="material-symbols"] {
+        font-family: 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
+        color: var(--muted) !important;
+    }
 
     [data-testid="stSidebar"] { background: var(--panel); border-right: 1px solid var(--panel-border); }
     [data-testid="stSidebar"] * { color: var(--text) !important; }
@@ -111,10 +127,13 @@ st.markdown(
     .stTabs [data-baseweb="tab"] { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.04em; color: var(--muted); }
     .stTabs [aria-selected="true"] { color: var(--amber) !important; }
 
-    .tracker { display: flex; flex-wrap: wrap; border: 1px solid var(--panel-border); border-radius: 10px; overflow: hidden; margin-bottom: 1.4rem; }
-    .stage { flex: 1 1 200px; position: relative; display: flex; align-items: center; gap: 12px;
-        padding: 14px 18px; background: var(--panel); border-right: 1px solid var(--panel-border); }
-    .stage:last-child { border-right: none; }
+    .tracker { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--panel-border);
+        border-radius: 10px; overflow: hidden; margin-bottom: 1.4rem; }
+    .stage { position: relative; display: flex; align-items: center; gap: 12px;
+        padding: 14px 18px; background: var(--panel);
+        border-right: 1px solid var(--panel-border); border-bottom: 1px solid var(--panel-border); }
+    .stage:nth-child(2n) { border-right: none; }
+    .stage:nth-last-child(-n+2) { border-bottom: none; }
     .stage-num { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 600; color: var(--muted); }
     .stage-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; color: var(--muted); }
     .stage-name { font-size: 0.95rem; color: var(--text); font-weight: 500; }
@@ -219,9 +238,14 @@ with st.sidebar:
     st.markdown("**Session log**")
     if st.session_state.history:
         for past_topic in st.session_state.history[:10]:
-            if st.button(past_topic, key=f"hist_{past_topic}", use_container_width=True, type="secondary"):
-                st.session_state.topic_input = past_topic
-                st.rerun()
+            st.button(
+                past_topic,
+                key=f"hist_{past_topic}",
+                use_container_width=True,
+                type="secondary",
+                on_click=set_topic,
+                args=(past_topic,),
+            )
     else:
         st.caption("No runs yet this session.")
 
@@ -251,11 +275,19 @@ with input_col:
 with button_col:
     run_clicked = st.button("▶ Run Pipeline", use_container_width=True, type="primary")
 
-chip_cols = st.columns(len(EXAMPLE_TOPICS))
-for i, example in enumerate(EXAMPLE_TOPICS):
-    if chip_cols[i].button(example, key=f"chip_{i}", use_container_width=True, type="secondary"):
-        st.session_state.topic_input = example
-        st.rerun()
+# 2x2 grid of example topics
+for row_start in range(0, len(EXAMPLE_TOPICS), 2):
+    row_topics = EXAMPLE_TOPICS[row_start:row_start + 2]
+    row_cols = st.columns(2)
+    for col, example in zip(row_cols, row_topics):
+        col.button(
+            example,
+            key=f"chip_{example}",
+            use_container_width=True,
+            type="secondary",
+            on_click=set_topic,
+            args=(example,),
+        )
 
 st.write("")
 
