@@ -6,7 +6,7 @@
 
 ```bash
 streamlit run app.py
-
+```
 To run the application directly from the terminal without the web interface:
 
 1. Open `pipeline.py`.
@@ -17,3 +17,4 @@ To run the application directly from the terminal without the web interface:
 
 ```bash
 python pipeline.py
+```
