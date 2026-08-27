@@ -61,24 +61,25 @@ def research_pipeline(topic: str, status_callback=None) -> dict:
 
 
 if __name__ == "__main__":
-    result = research_pipeline(topic="What are the latest Developments in AI?")
+    # topic = input("What tipic do u want to search for ?")
+    # result = research_pipeline(topic=topic)
 
-    print("\n" + "=" * 50)
-    print("SEARCH RESULTS")
-    print("=" * 50)
-    print(result.get("Search Response", "No search response found."), "\n")
+    # print("\n" + "=" * 50)
+    # print("SEARCH RESULTS")
+    # print("=" * 50)
+    # print(result.get("Search Response", "No search response found."), "\n")
 
-    print("=" * 50)
-    print("SCRAPED CONTENT")
-    print("=" * 50)
-    print(result.get("Scraped Response", "No scraped response found."), "\n")
+    # print("=" * 50)
+    # print("SCRAPED CONTENT")
+    # print("=" * 50)
+    # print(result.get("Scraped Response", "No scraped response found."), "\n")
 
-    print("=" * 50)
-    print("GENERATED REPORT")
-    print("=" * 50)
-    print(result.get("Report", "No report generated."), "\n")
+    # print("=" * 50)
+    # print("GENERATED REPORT")
+    # print("=" * 50)
+    # print(result.get("Report", "No report generated."), "\n")
 
-    print("=" * 50)
-    print("CRITIC FEEDBACK")
-    print("=" * 50)
-    print(result.get("Feedback", "No feedback generated."))
+    # print("=" * 50)
+    # print("CRITIC FEEDBACK")
+    # print("=" * 50)
+    # print(result.get("Feedback", "No feedback generated."))
