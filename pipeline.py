@@ -16,10 +16,6 @@ def research_pipeline(topic: str, status_callback=None) -> dict:
 
     state = {}
 
-    print("\n", " = " * 43)
-    print("Starting Search Agent...")
-    notify("Starting Search Agent...")
-
     search_agent = search_Agent()
     search_resp = search_agent.invoke({
         # Fixed: Passed valid message dictionary schema with 'role' and 'content' keys
@@ -28,10 +24,6 @@ def research_pipeline(topic: str, status_callback=None) -> dict:
 
     state["Search Response"] = search_resp['messages'][-1].content
     notify("Search Agent finished.")
-
-    print("\n", " = " * 43)
-    print("Starting Scraper Agent...")
-    notify("Starting Scraper Agent...")
 
     scraper_agent = scraper_Agent()
     scrape_response = scraper_agent.invoke({
