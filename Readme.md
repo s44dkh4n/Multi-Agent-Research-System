@@ -1,12 +1,13 @@
 # Instructions
 
-## Web Application (Frontend)
+## Run Using Streamlit
 
 `app.py` serves as the frontend file. Launch it with Streamlit using the following command:
 
 ```bash
 streamlit run app.py
 ```
+## Run Using Terminal
 To run the application directly from the terminal without the web interface:
 
 1. Open `pipeline.py`.
